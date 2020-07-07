@@ -1,0 +1,137 @@
+.pomodoro-clock {
+  text-align: center;
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'break-controls session-controls'
+    'current-session current-session'
+    'footer footer';
+  padding: 0% 10%;
+  width: 800px;
+  height: 600px;
+  margin: auto;
+}
+
+.break-controls, .session-controls {
+  width: 350px;
+  height: 100px;
+  text-align: center;
+  font-size: 2rem;
+  padding: 5%;
+  display: grid;
+  grid-template-areas:
+    'header header header'
+    'decrement length increment';
+  align-items: center;
+}
+
+#session-label, #break-label {
+  font-weight: bold;
+  grid-area: header;
+}
+
+#break-decrement, #session-decrement {
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  grid-area: decrement;
+}
+
+#break-length, #session-length {
+  grid-area: length;
+  font-family: 'Modak', cursive;
+  font-size: 4rem;
+}
+
+#break-increment, #session-increment {
+  grid-area: increment;
+  width: 60px;
+  height: 60px;
+  margin: auto;
+}
+
+.break-controls {
+  grid-area: break-controls;
+}
+
+.session-controls {
+  grid-area: session-controls;
+}
+
+.header {
+  padding-top: 50px;
+  font-family: 'Modak', cursive;
+  font-size: 4rem;
+  grid-area: header;
+}
+
+.footer {
+  text-align: center;
+  grid-area: footer;
+  font-size: 2rem;
+}
+
+.footer p {
+  margin: 0;
+  padding: 0;
+}
+
+.current-session {
+  border: 5px solid black;
+  border-radius: 10px;
+  grid-area: current-session;
+  margin: 0 20%;
+  padding: 5px;
+  font-size: 2rem;
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'timer timer'
+    'start-stop reset';
+}
+
+#author-name {
+  font-family: 'Modak', cursive;
+  font-size: 2.5rem;
+}
+
+.up-down-image, .reset-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+}
+
+.reset-image, .start-stop-image {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+#timer-label {
+  font-size: 2.5rem;
+  font-weight: bold;
+  grid-area: header;
+}
+
+#time-left {
+  grid-area: timer;
+}
+
+#reset {
+  justify-self: center;
+  width: 80px;
+  height: 70px;
+  grid-area: reset;
+  padding: 10px;
+}
+
+#start-stop {
+  justify-self: center;
+  width: 80px;
+  height: 70px;
+  grid-area: start-stop;
+  padding: 10px;
+}
+
+#icon-credit {
+  font-size: 1rem;
+}
