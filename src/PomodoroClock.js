@@ -5,6 +5,7 @@ import upArrow from './control-images/up-arrow.png';
 import start from './control-images/right-arrow.png';
 import pause from './control-images/pause.png';
 import reset from './control-images/reset.png';
+import alarm from './media/ten-second-alarm.mp3';
 
 class PomodoroClock extends React.Component {
 
@@ -13,7 +14,7 @@ class PomodoroClock extends React.Component {
     this.state = {
       currentStatus: 'Session',
       breakLength: 5*60,
-      sessionLength: 25*60,
+      sessionLength: 11,
       timerRunning: false,
       paused: false,
       clockTimer: '',
@@ -79,13 +80,23 @@ class PomodoroClock extends React.Component {
         if (timeRemaining >= 0 ) {
           document.getElementById("time-left").textContent = this.displayTime(timeRemaining);
         }
+        if (timeRemaining ===10) {
+          document.getElementById("time-left").classList.add("redText");
+          this.playSound();
+        }
       }, 1000),
     });
-
     }
     this.setState({
       timerRunning: currentStatus ? false : true,
     })
+  }
+
+  playSound(){
+    console.log("entered play sound");
+    let sound = document.getElementById("ten-second-alarm");
+    console.log(sound);
+    document.getElementById("ten-second-alarm").play();
   }
 
   displayTime(time) {
@@ -106,6 +117,7 @@ class PomodoroClock extends React.Component {
   }
 
   reset() {
+    document.getElementById("time-left").classList.remove("redText");
     let currentTimer = this.state.clockTimer;
     document.getElementById("time-left").textContent = '25:00';
     this.setState({
@@ -114,11 +126,11 @@ class PomodoroClock extends React.Component {
       breakLength: 5*60,
       clockTimer: clearInterval(currentTimer),
     })
-
   }
 
 
   render(){
+
     return (
       <div className="pomodoro-clock">
 
@@ -164,7 +176,7 @@ class PomodoroClock extends React.Component {
 
         <div className="current-session">
           <div id="timer-label">{this.state.currentStatus}</div>
-          <div id="time-left">
+          <div  id="time-left">
             { this.displayTime(this.state.sessionLength) }
           </div>
           {this.state.timerRunning ?
@@ -187,6 +199,11 @@ class PomodoroClock extends React.Component {
                className="reset-image"
                src={reset}
                alt="reset"  />
+          <audio  id="ten-second-alarm"
+                  src={alarm}
+                  autoPlay={false}>
+            Your browser does not support the <code>audio</code> element.
+          </audio>
         </div>
 
         <div className="footer">

@@ -135,3 +135,6 @@
 #icon-credit {
   font-size: 1rem;
 }
+
+.redText { color: red;
+           font-weight: bold;}
