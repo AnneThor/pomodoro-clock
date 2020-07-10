@@ -1,18 +1,21 @@
 import React from 'react';
 import './PomodoroClock.css';
-import downArrow from './control-images/down-arrow.png';
-import upArrow from './control-images/up-arrow.png';
+import LengthControl from './components/LengthControl.js';
+import Timer from './components/Timer.js';
+
+
 import start from './control-images/right-arrow.png';
 import pause from './control-images/pause.png';
 import reset from './control-images/reset.png';
-import alarm from './media/ten-second-alarm.mp3';
+import tenSecondAlarm from './media/ten-second-alarm.mp3';
+import beep from './media/beep.mp3';
 
 class PomodoroClock extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      currentStatus: 'Session',
+      status: 'session',
       breakLength: 5*60,
       sessionLength: 11,
       timerRunning: false,
@@ -30,7 +33,7 @@ class PomodoroClock extends React.Component {
 
   breakDecrement() {
     let currentValue = this.state.breakLength;
-    if (currentValue === 1) {
+    if (currentValue/60 <= 1) {
       return;
     } else {
       this.setState({breakLength: currentValue-60})
@@ -39,7 +42,7 @@ class PomodoroClock extends React.Component {
 
   breakIncrement() {
     let currentValue = this.state.breakLength;
-    if (currentValue === 60) {
+    if (currentValue/60 === 60) {
       return;
     } else {
       this.setState({breakLength: currentValue+60})
@@ -48,7 +51,7 @@ class PomodoroClock extends React.Component {
 
   sessionDecrement() {
     let currentValue = this.state.sessionLength;
-    if (currentValue === 1) {
+    if (currentValue/60 <= 1) {
       return;
     } else {
       this.setState({sessionLength: currentValue-60})
@@ -57,7 +60,7 @@ class PomodoroClock extends React.Component {
 
   sessionIncrement() {
     let currentValue = this.state.sessionLength;
-    if (currentValue === 60) {
+    if (currentValue/60 === 60) {
       return;
     } else {
       this.setState({sessionLength: currentValue+60})
@@ -65,14 +68,22 @@ class PomodoroClock extends React.Component {
   }
 
   handleTimer() {
-    let currentStatus = this.state.timerRunning;
-    var timeRemaining = this.state.sessionLength;
-    if (currentStatus === true) {
+    let isTimerRunning = this.state.timerRunning;
+    let currentStatus = this.state.status;
+    let timeRemaining = currentStatus === 'session' ? this.state.sessionLength : this.state.breakLength;
+    if (isTimerRunning === true) {
       //pause the timer
       let currentTimer = this.state.clockTimer;
-      this.setState({
-        clockTimer: clearInterval(currentTimer),
-      })
+      if (currentStatus==="session") {
+        this.setState({ sessionLength: timeRemaining,
+                        clockTimer: clearInterval(currentTimer),
+                      });
+      } else {
+        this.setState({ breakLength: timeRemaining,
+                        clockTimer: clearInterval(currentTimer),
+                      });
+      }
+      this.stopCountdown();
     } else {
       this.setState({
         clockTimer: setInterval( () => {
@@ -80,37 +91,58 @@ class PomodoroClock extends React.Component {
         if (timeRemaining >= 0 ) {
           document.getElementById("time-left").textContent = this.displayTime(timeRemaining);
         }
-        if (timeRemaining ===10) {
+        if (timeRemaining === 10) {
           document.getElementById("time-left").classList.add("redText");
-          this.playSound();
+          document.getElementById("timer-label").classList.add("redText");
+          this.playCountdown();
+        }
+        if (timeRemaining === 0) {
+          this.playAlarm();
+          this.switchSession();
         }
       }, 1000),
     });
     }
     this.setState({
-      timerRunning: currentStatus ? false : true,
+      timerRunning: isTimerRunning ? false : true,
     })
-  }
-
-  playSound(){
-    console.log("entered play sound");
-    let sound = document.getElementById("ten-second-alarm");
-    console.log(sound);
-    document.getElementById("ten-second-alarm").play();
   }
 
   displayTime(time) {
     let minutes = Math.floor(time/60);
     let seconds = time % 60;
-    if (0< seconds && seconds < 10) {
-      seconds = '0' + seconds;
-    }
-    if (seconds === 0 ) {
-      seconds = '00';
-    }
+    if (0< seconds && seconds < 10) { seconds = '0' + seconds; }
+    if (seconds === 0 ) { seconds = '00'; }
     return minutes + ":" + seconds;
-
   }
+
+  switchSession(){
+    let currentStatus = this.state.status;
+    this.setState({
+      status: currentStatus === 'session' ? 'break' : 'session',
+      timerRunning: false,
+    });
+    document.getElementById("timer-label").classList.remove("redText");
+    document.getElementById("time-left").classList.remove("redText");
+  }
+
+  stopCountdown(){
+    document.getElementById("ten-second-alarm").pause();
+  }
+
+  playCountdown(){
+    document.getElementById("ten-second-alarm").play();
+  }
+
+  stopAlarm(){
+    document.getElementById("beep").pause();
+  }
+
+  playAlarm(){
+    document.getElementById("beep").play();
+  }
+
+
 
   displayBreakSessionTime(time) {
     return Math.floor(time/60);
@@ -118,9 +150,11 @@ class PomodoroClock extends React.Component {
 
   reset() {
     document.getElementById("time-left").classList.remove("redText");
+    document.getElementById("timer-label").classList.remove("redText");
     let currentTimer = this.state.clockTimer;
     document.getElementById("time-left").textContent = '25:00';
     this.setState({
+      status: 'session',
       timerRunning: false,
       sessionLength: 25*60,
       breakLength: 5*60,
@@ -134,77 +168,26 @@ class PomodoroClock extends React.Component {
     return (
       <div className="pomodoro-clock">
 
-        <header className="header">
-          Pomodoro Clock
-        </header>
+        <header className="header">Pomodoro Clock</header>
 
+        <LengthControl controlType="break"
+                       decrement={this.breakDecrement}
+                       increment={this.breakIncrement}
+                       display={this.displayBreakSessionTime}
+                       time={this.state.breakLength}/>
 
-        <div className="break-controls">
-          <div id="break-label">Break Length</div>
-          <img id="break-decrement"
-               value="break-decrement"
-               onClick={this.breakDecrement}
-               className="up-down-image"
-               src={downArrow}
-               alt="arrow pointing down"
-          />
-          <div id="break-length">{this.displayBreakSessionTime(this.state.breakLength)}</div>
-          <img id="break-increment"
-               value="break-increment"
-               onClick={this.breakIncrement}
-               className="up-down-image"
-               src={upArrow}
-               alt="arrow pointing up"  />
-        </div>
+       <LengthControl controlType="session"
+                      decrement={this.sessionDecrement}
+                      increment={this.sessionIncrement}
+                      display={this.displayBreakSessionTime}
+                      time={this.state.sessionLength}/>
 
-        <div className="session-controls">
-          <div id="session-label">Session Length</div>
-          <img id="session-decrement"
-               value="session-decrement"
-               onClick={this.sessionDecrement}
-               className="up-down-image"
-               src={downArrow}
-               alt="arrow pointing down" />
-          <div id="session-length">{this.displayBreakSessionTime(this.state.sessionLength)}</div>
-          <img id="session-increment"
-               value="session-increment"
-               onClick={this.sessionIncrement}
-               className="up-down-image"
-               src={upArrow}
-               alt="arrow pointing up"  />
-        </div>
-
-        <div className="current-session">
-          <div id="timer-label">{this.state.currentStatus}</div>
-          <div  id="time-left">
-            { this.displayTime(this.state.sessionLength) }
-          </div>
-          {this.state.timerRunning ?
-          (<img id="start-stop"
-                className="start-stop-image"
-                src={pause}
-                alt="pause"
-                value="pause"
-                onClick={this.handleTimer} />) :
-          (<img id="start-stop"
-                className="start-stop-image"
-                src={start}
-                alt="play"
-                value="play"
-                onClick={this.handleTimer}/>)
-          }
-          <img id="reset"
-               value="reset"
-               onClick={this.reset}
-               className="reset-image"
-               src={reset}
-               alt="reset"  />
-          <audio  id="ten-second-alarm"
-                  src={alarm}
-                  autoPlay={false}>
-            Your browser does not support the <code>audio</code> element.
-          </audio>
-        </div>
+       <Timer         type={this.state.status}
+                      startTime={this.state.status === 'session' ? this.state.sessionLength: this.state.breakLength}
+                      displayTime={this.displayTime}
+                      running={this.state.timerRunning}
+                      handleTimer={this.handleTimer}
+                      reset={this.reset}/>
 
         <div className="footer">
           <p>Designed & Coded by</p>
