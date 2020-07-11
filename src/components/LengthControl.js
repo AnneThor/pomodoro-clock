@@ -17,7 +17,7 @@ function LengthControl (props) {
            className="up-down-image"
            src={downArrow}
            alt="arrow pointing down" />
-      <div id={props.controlType+"-length"}>{props.display(props.time)}</div>
+      <div id={props.controlType+"-length"}>{props.time}</div>
       <img id={props.controlType+"-increment"}
            value={props.controlType+"-increment"}
            onClick={props.increment}

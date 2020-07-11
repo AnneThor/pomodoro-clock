@@ -19,13 +19,13 @@ function Timer (props) {
         { props.displayTime(props.startTime) }
       </div>
       {props.running ?
-      (<img id="start-stop"
+      (<img id="start_stop"
             className="start-stop-image"
             src={pause}
             alt="pause"
             value="pause"
             onClick={props.handleTimer} />) :
-      (<img id="start-stop"
+      (<img id="start_stop"
             className="start-stop-image"
             src={start}
             alt="play"

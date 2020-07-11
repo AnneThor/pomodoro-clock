@@ -41,6 +41,8 @@
   grid-area: length;
   font-family: 'Modak', cursive;
   font-size: 4rem;
+  width: 100px;
+  margin: auto;
 }
 
 #break-increment, #session-increment {
@@ -124,7 +126,7 @@
   padding: 10px;
 }
 
-#start-stop {
+#start_stop {
   justify-self: center;
   width: 80px;
   height: 70px;
