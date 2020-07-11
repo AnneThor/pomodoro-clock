@@ -4,9 +4,6 @@ import LengthControl from './components/LengthControl.js';
 import Timer from './components/Timer.js';
 
 
-import start from './control-images/right-arrow.png';
-import pause from './control-images/pause.png';
-import reset from './control-images/reset.png';
 import tenSecondAlarm from './media/ten-second-alarm.mp3';
 import beep from './media/beep.mp3';
 
