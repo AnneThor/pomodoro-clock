@@ -1,5 +1,12 @@
-**Pomodoro Clock** created with **Create-React-App** has the following features:
+------------------------------------------------------------------------
+Pomodoro Clock made from Create-React-App
 
-- Adjust session length (full minute increments between 1-60)
-- Adjust break length (full minute increments between 1-60)
-- Start, pause and stop/reset functionality
+[Live version](https://annethor.github.io/pomodoro-clock/)
+
+------------------------------------------------------------------------
+
+PROJECT TITLE: Pomodoro-Clock. 
+
+VERSION or DATE: 1.0 [September 19, 2020]. 
+
+AUTHORS: Anne Thorsteinson. 
